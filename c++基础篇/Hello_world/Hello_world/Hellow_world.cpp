@@ -4,9 +4,12 @@ using namespace std;
 
 int main()
 {
-	int a;
-	cin >> a;
-	cout <<"a:" << sizeof(double) << endl;
+	int a;6
+	int b;
+	int& ra = a;
+	cout << &a << endl;
+	cout << &ra << endl;
+
 
 
 	system("pause");

@@ -1,0 +1,10 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "任务-class_obj",
+      "appliesTo": "13_类_对象/class_obj.cpp",
+      "type": "launch"
+    }
+  ]
+}

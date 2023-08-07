@@ -27,5 +27,20 @@ int main()
 	*p = 15;
 	cout << a << endl;
 	//修改p的值也会修改a的值，因为p存储的就是a的地址
+
+
+	//指向指针的指针
+	int** pr;
+	pr = &p;
+	cout << &pr << endl; // pr自己在内存中的地址
+	cout << pr << endl; // 指向的p的地址
+	cout << &p << endl; // p自己的地址
+	cout << *pr << endl; //指向p指向的地址 即，p指向a的地址，pr也是指向的a的地址
+	cout << p << endl;
+
+	cout << &a << endl;
+	cout << **pr << endl;
+
+
 	system("pause");
 }

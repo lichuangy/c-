@@ -1359,3 +1359,911 @@ q = &s;
 *p; //void*指针 只可以存放地址和比较大小 而不可以使用内容；
 ~~~
 
+## 指向指针的指针
+
+- 指向指针的指针是一种多级间接寻址的形式，或者说是一个指针链。
+- 指针的指针就是将指针的地址存放在另一个指针里面。
+- 通常，一个指针包含一个变量的地址。当我们定义一个指向指针的指针时，第一个指针包含了第二个指针的地址，第二个指针指向包含实际值的位置。
+
+假设有一个 int 类型的变量 a，p1是指向 a 的指针变量，p2 又是指向 p1 的指针变量，它们的关系如下图所示:
+
+![1688196098831](assets/1688196098831.png)
+
+![1688196178976](assets/1688196178976.png)
+
+1. 例子：
+
+~~~c++
+#include<iostream>
+
+using namespace std;
+
+int main()
+{
+	//定义指针
+	int* p;
+    
+	int a = 10;
+    // 有*为内容，无*为地址
+	p = &a;
+
+
+	//指向指针的指针
+	int** pr;
+	pr = &p;
+	cout << &pr << endl; // pr自己在内存中的地址
+	cout << pr << endl; // 指向的p的地址
+	cout << &p << endl; // p自己的地址
+	cout << *pr << endl; //指向p指向的地址 即，p指向a的地址，pr也是指向的a的地址
+	cout << p << endl;
+
+	cout << &a << endl;
+	cout << **pr << endl;
+
+	system("pause");
+}
+~~~
+
+
+
+# 引用
+
+C++中的引用可以理解为给一个变量取了另一个名字,二者实际指向同一个对象。
+
+1. 定义引用
+
+   ~~~c++
+   int a = 5;
+   int &b = a;  // b是a的引用,两个变量实际指向同一个对象
+   //如同给a取了一个别名
+   ~~~
+
+2. 对引用的操作
+
+   ~~~c++
+   b = 10;  //实际上修改的是a的值
+   
+   //定义一个新变量c
+   c = 25;
+   b=c;
+   //此时，b=c的操作是将c的值赋值给b，而b引用的是a，最后a的值为25
+   
+   /*
+   总结：
+   	一旦引用被初始化为一个对象，就不能被指向到另一个对象。指针可以在任何时候指向到另一个对象。
+   	
+   	引用必须在创建时被初始化。指针可以在任何时间被初始化不存在空引用。
+   */
+   ~~~
+
+   
+
+3. 引用的引用
+
+   C++ 中引用的引用还是实质上对变量进行了另一层引用,只不过是这样做的方式是通过引用本身。
+
+   ~~~c++
+   int a = 5; 
+   int &b = a;   // b是a的引用,b相当于a的一个别名
+   int &&c = b;  // c是b的引用,c相当于b的又一个别名
+                // 也就是说c实际上是a的一个二次别名
+   ~~~
+
+   ~~~c++
+   c = 10;  // 实际修改的是a的值,因为c最终引用的是a
+   ~~~
+
+   总结：
+
+   - 引用的引用仍然是对变量的引用,只不过是通过中介引用(b)进行的
+   - 因此最终操作还是变量a
+   - 引用的引用相当于给别名取了一个别名
+
+4. 案例
+
+   ~~~c++
+   #include<iostream>
+   
+   using namespace std;
+   
+   int main()
+   {
+   	//引用
+   	int a = 10, b = 30;
+   	// 绑定一样 ref就是a,如何操作ref就是操作a，
+   	int& ref = a; 
+   	cout << ref << endl;
+   	cout << &ref << endl;
+   	cout << &a << endl;
+   	ref = b; //等价 a = b;
+   	cout << ref << endl;
+   	cout << a << endl;
+   
+   	//引用的引用
+   	int& rref = ref;
+   	rref = 36;
+   	cout << ref << endl;
+   	cout << rref << endl;
+   	cout << a << endl;
+   
+   
+   	system("pause");
+   }
+   ~~~
+
+# 面向对象
+
+## 类与对象
+
+类用于指定对象的形式，它包含了数据表示法和用于处理数据的方法。类中的数据和方法称为类的成员。函数在一个类中被称为类的成员。
+
+1. 类定义
+
+   ~~~c++
+   class Box
+   {
+      public:
+         double length;   // 盒子的长度
+         double breadth;  // 盒子的宽度
+         double height;   // 盒子的高度
+   };
+   ~~~
+
+   关键字 **public** 确定了类成员的访问属性。在类对象作用域内，公共成员在类的外部是可访问的。您也可以指定类的成员为 **private** 或 **protected**，这个我们稍后会进行讲解。
+
+2. 定义对象
+
+   ~~~c++
+   Box Box1;          // 声明 Box1，类型为 Box
+   Box Box2;          // 声明 Box2，类型为 Box
+   ~~~
+
+   
+
+3. 访问类成员
+
+   ~~~c++
+   #include <iostream>
+   
+   using namespace std;
+   
+   class Box
+   {
+      public:
+         double length;   // 长度
+         double breadth;  // 宽度
+         double height;   // 高度
+   };
+   
+   int main( )
+   {
+      Box Box1;        // 声明 Box1，类型为 Box
+      Box Box2;        // 声明 Box2，类型为 Box
+      double volume = 0.0;     // 用于存储体积
+   
+      // box 1 详述
+       //类的对象的公共数据成员可以使用直接成员访问运算符 (.) 来访问。
+      Box1.height = 5.0; 
+      Box1.length = 6.0; 
+      Box1.breadth = 7.0;
+   
+      // box 2 详述
+      Box2.height = 10.0;
+      Box2.length = 12.0;
+      Box2.breadth = 13.0;
+   
+      // box 1 的体积
+      volume = Box1.height * Box1.length * Box1.breadth;
+      cout << "Box1 的体积：" << volume <<endl;
+   
+      // box 2 的体积
+      volume = Box2.height * Box2.length * Box2.breadth;
+      cout << "Box2 的体积：" << volume <<endl;
+      
+       system("pause");
+   }
+   ~~~
+
+   
+
+## 类的成员函数
+
+成员函数：类函数，类方法，定义在类内部的函数。
+
+​		   成员函数只是属于该类的，只能访问这个类的成员变量和其他内容。
+
+1. 使用成员函数访问类的成员
+
+   ~~~c++
+   class Box
+   {
+      public:
+         double length;         // 长度
+         double breadth;        // 宽度
+         double height;         // 高度
+         double getVolume(void);// 返回体积
+   };
+   ~~~
+
+
+
+2. 成员函数可以定义在类的内部
+
+   ~~~c++
+   class Box
+   {
+      public:
+         double length;         // 长度
+         double breadth;        // 宽度
+         double height;         // 高度
+         double getVolume(void)
+         {
+             return lenght * breadth * height;
+         }
+   };
+   ~~~
+
+   
+
+3. 在类的外部使用定义函数（在类的内部声明成员函数），使用::范围解析运算符定义
+
+   ~~~c++
+   class Box
+   {
+      public:
+         double length;         // 长度
+         double breadth;        // 宽度
+         double height;         // 高度
+         double getVolume(void);// 声明
+   };
+   
+   double Box::getVolume(void):
+   {
+       return lenght * breadth * height; 
+   }
+   
+   // :: 等于给函数打一个标签，表示是哪个对象中的函数
+   ~~~
+
+4. 调用成员函数
+
+   ~~~c++
+   //创建对象
+   Box Box1;
+   
+   Box1.lenght = 12.3;
+   Box1.breadth = 23.1;
+   Box1.height = 14.3;
+   
+   //调用成员函数，使用 .运算符
+   Box1.getVolume()
+   ~~~
+
+   
+
+5. 案例
+
+   ~~~c++
+   #include<iostream>
+   
+   using namespace std;
+   
+   
+   class Box
+   {
+   public:
+       double length;   // 长度
+       double breadth;  // 宽度
+       double height;   // 高度
+   
+       // 成员函数声明
+       double getVolume(void);
+   
+       void setLen(double len);
+   
+       void setBre(double bre);
+   
+       void setHei(double hei);
+   };
+   
+   // 成员函数定义
+   double Box::getVolume(void)
+   {
+       return length * height * breadth;
+   }
+   
+   void Box::setLen(double len) {
+          
+       length = len;
+      
+   }
+   
+   void Box::setBre(double bre) {
+   
+        breadth = bre;
+   
+   }
+   
+   void Box::setHei(double hei) {
+   
+      height = hei;
+   
+   }
+   
+   
+   int main()
+   {
+       // 定义与使用
+       Box Box1;
+       Box Box2;
+       double volume = 0.0;
+   
+       //类成员函数
+          // box 1 详述
+       Box1.setLen(6.0);
+       Box1.setBre(7.0);
+       Box1.setHei(5.0);
+   
+       // box 2 详述
+       Box2.setLen(12.0);
+       Box2.setBre(13.0);
+       Box2.setHei(10.0);
+   
+       // box 1 的体积
+       volume = Box1.getVolume();
+       cout << "Box1 的体积：" << volume << endl;
+   
+       // box 2 的体积
+       volume = Box2.getVolume();
+       cout << "Box2 的体积：" << volume << endl;
+     
+   
+       system("pause");
+   }
+   // 总结
+   /*
+   
+   - 定义在类内部
+   - 可以访问类的所有成员
+   - 访问类的对象
+   
+   */
+   ~~~
+
+
+
+## 成员变量/函数存储
+
+成员变量与成员函数是分开存储
+
+1. 案例
+
+   ~~~C++
+   #include<iostream>
+   
+   using namespace std;
+   
+   
+   class Box
+   {
+   public:
+       double length;   // 长度//非静态成员变量 属于类对象上
+       double breadth;  // 宽度
+       double height;   // 高度
+       static double x;		//静态成员变量 不属于类对象上
+   
+       // 成员函数声明
+       double getVolume(void);//非静态成员函数 不属于类的对象上
+   
+       void setLen(double len);
+   
+       void setBre(double bre);
+   
+       void setHei(double hei);
+       static void setx(void);//静态成员函数 不属于类的对象上
+   };
+   
+   // 成员函数定义
+   double Box::getVolume(void)
+   {
+       return length * height * breadth;
+   }
+   
+   void Box::setLen(double len) {
+          
+       length = len;
+      
+   }
+   
+   void Box::setBre(double bre) {
+   
+        breadth = bre;
+   
+   }
+   
+   void Box::setHei(double hei) {
+   
+      height = hei;
+   
+   }
+   
+   static Box::setx(void)
+   {
+       x=1;
+   }
+   
+   
+   int main()
+   {
+       // 定义与使用
+       Box Box1;
+       
+       cout<<sizeof(Box1)<<endl;
+    
+     
+   
+       system("pause");
+   }
+   /*
+   如果Box是一个空类例如：
+   class BOX
+   {};
+   创建对象
+   BOX box2;
+   打印box2空对象的空间
+   cout<<sizeof(box2)<<endl;
+   得出结果 1
+   
+   C++编译器会给空对象分配一个字节的内存空间，为了区分对象占内存的位置 且是独一无二的内存地址
+   
+   如果非空，例如：
+   class BOX
+   {
+       int boxa;
+   };
+   创建对象
+   BOX box2;
+   打印box2空对象的空间
+   cout<<sizeof(box2)<<endl;
+   得出结果 4
+   
+   */
+   ~~~
+
+## 类的访问修饰符
+
+1.C++类提供了三种类成员修饰符:
+
+1. public:公有成员
+   - 公有成员可以在任何地方访问包括类内部,类外部以及派生类
+2. protected:保护成员
+   -  保护成员只能在类内部和派生类中访问不能在该类外部访问
+3. private:私有成员
+   - 私有成员只能在类的内部访问不能在类的外部或派生类中访问
+
+2.[案例](https://www.nowcoder.com/tutorial/10003/a25095b7be3d4098a133e1e40e8a1e04)
+
+3.在C++类之间,存在三种主要关系:
+
+- 基类/父类指被继承的类
+- 派生类/子类指继承自基类/父类的类
+-  成员类: 定义在其他类内部的类
+- 外部类定义于类外部
+
+![1688264789678](assets/1688264789678.png)
+
+
+
+
+
+## 构造函数与析构函数
+
+### 构造函数
+
+构造函数的名称与类的名称是完全相同的，并且不会返回任何类型，也不会返回 void。构造函数可用于为某些成员变量设置初始值。
+
+1. 实例理解
+
+   ~~~c++
+   #include<iostream>
+   
+   using namespace std;
+   
+   
+   class Box
+   {
+   	public:
+   		void setLength(double len);
+   		double getLength(void);
+   		Box();//构造函数
+   	private:
+   		double lenght;
+   
+   };
+   	
+   //定义成员函数与构造函数
+   void Box::setLength(double len)
+   {
+   	lenght = len;
+   }
+   double Box::getLength()
+   {
+   	return lenght;
+   }
+   
+   Box::Box(void){
+   	cout << "this is struct func!" << endl;
+   	}
+   
+   int main()
+   {
+   
+   	Box Box1;
+   	Box1.setLength(12.4);
+   	cout << Box1.getLength() << endl;
+   
+   	system("pause");
+   }
+   
+   //构造函数不需要手动调用，会自动调用
+   //构造函数可以带参数
+   Box ::Box(double len)
+   {
+       lenght = len;
+   }
+   ~~~
+
+   
+
+### 析构函数
+
+析构函数的名称与类的名称是完全相同的，只是在前面加了个波浪号（~）作为前缀，它不会返回任何值，也不能带有任何参数。析构函数有助于在跳出程序（比如关闭文件、释放内存等）前释放资源。
+
+1. 语法格式
+
+   ~~~c++
+   
+   ~~~
+
+   
+
+2. 例子
+
+~~~c++
+#include<iostream>
+
+using namespace std;
+
+
+class Box
+{
+	public:
+		void setLength(double len);
+		double getLength(void);
+		Box();//构造函数
+		~Box();//析构函数
+	private:
+		double lenght;
+
+};
+	
+//定义成员函数，构造函数与析构函数
+void Box::setLength(double len)
+{
+	lenght = len;
+}
+
+
+double Box::getLength()
+{
+	return lenght;
+}
+
+//构造函数
+Box::Box(void){
+	cout << "this is struct func!" << endl;
+	}
+//析构函数
+Box :: ~Box()
+{
+	cout << "this is ojbect delete" << endl;
+	system("pause");
+}
+
+int main()
+{
+
+	Box Box1;
+	Box1.setLength(12.4);
+	cout << Box1.getLength() << endl;
+
+	system("pause");
+}
+
+//通过debug模式一步步的看什么时候会执行到析构函数这个位置
+//debug用法：
+/*
+
+选择位置打断点
+
+逐语句（F11）：按照代码顺序，从上至下逐行运行，若遇到函数，则进入函数，逐行运行。
+
+逐过程（F10）：主函数中从上至下逐行运行（即使是for循环也是逐行运行），若遇到函数，直接一次性调用完毕。
+
+调试（F5）：直接运行到断点处停止，停止后若按F11，则进入该断点（当该断点是函数时）；若按F10，则一次性执行完该断点处语句，然后执行后面语句。
+
+*/
+~~~
+
+
+
+3. 结论
+
+- 析构函数执行的目的就是释放对象占用的资源(包括内存),执行完成后对象和其内存则会被系统自动回收。
+- 析构函数将会在对象离开作用域时自动调用。
+- 析构函数会在对象销毁时自动调用,无需人工调用。
+
+
+
+## 友元类
+
+类的友元函数是定义在类外部，但有权访问类的所有私有（private）成员和保护（protected）成员。尽管友元函数的原型有在类的定义中出现过，但是友元函数并不是成员函数。
+
+友元可以是一个函数，该函数被称为友元函数；友元也可以是一个类，该类被称为友元类，在这种情况下，整个类及其所有成员都是友元。
+
+如果要声明函数为一个类的友元，需要在类定义中该函数原型前使用关键字 **friend**，如下所示：
+
+~~~c++
+class Box{
+   // ...
+   friend void s(Box Box1);  // 1
+   //... 
+};
+
+void s(Box Box1){     // 2
+   // ... 
+}
+
+int main(){  
+
+   Box Box1;    // 3
+   // ...  
+   s(Box1);     
+}
+
+//这三个位置要求一样
+~~~
+
+
+
+1. 案例
+
+~~~C++
+#include<iostream>
+
+using namespace std;
+
+class Box
+{
+	int lenght;
+public:
+	friend void s(Box Box1);
+	void setlen(int len);
+};
+
+void s(Box Box1)
+{
+	cout << Box1.lenght << endl;
+	
+}
+
+void Box::setlen(int len)
+{
+	lenght = len;
+};
+
+int main()
+{
+
+	Box Box1;
+	Box1.setlen(12);
+	s(Box1);
+
+	system("pause");
+}
+~~~
+
+
+
+## 函数重载
+
+函数重载：根据传输的形参的数据类型来找到对象的同功能的不通函数，类似于restful api风格但是又有根本的区别。
+
+1. 案例
+
+~~~c++
+#include <iostream>
+using namespace std;
+ 
+class printData
+{
+   public:
+      void print(int i) {
+        cout << "整数为: " << i << endl;
+      }
+ 
+      void print(double  f) {
+        cout << "浮点数为: " << f << endl;
+      }
+ 
+      void print(char c[]) {
+        cout << "字符串为: " << c << endl;
+      }
+};
+ 
+int main(void)
+{
+   printData pd;
+ 
+   // 输出整数
+   pd.print(5);
+   // 输出浮点数
+   pd.print(500.263);
+   // 输出字符串
+   char c[] = "Hello C++";
+   pd.print(c);
+ 
+   system("pause");
+}
+~~~
+
+## 运算符重载
+
+
+
+
+
+## 继承
+
+  ~~~c++
+#include<iostream>
+
+using namespace std;
+
+//基类
+class Box
+{
+	int text;
+public:
+	double lenght, breadth, height;
+	void set_pub(double len, double bre, double hei)
+	{
+		lenght = len;
+		breadth = bre;
+		height = hei;
+	};	
+};
+
+class Box_value
+{
+public:
+	void get_value(double volume)
+	{
+		cout << volume * 4200 << endl;
+	}
+
+};
+
+
+//派生类
+class Box2:public Box, public Box_value
+{
+public:
+	double volume(void)
+	{
+		return height * breadth * lenght;
+	}
+	void get_text()
+	{
+		Box b;
+		b.text = 13;
+	}
+
+	//派生类不可以继承基类中的私有成员
+	//int set_text(int t)
+	//{
+	//	text = t;
+	//}
+};
+
+
+int main()
+{
+	Box2 box_a;
+	//调用box_a的Box2继承的Box的set_pub方法
+	box_a.set_pub(1, 2, 3);
+	double box_a_value = box_a.volume();
+	box_a.get_value(box_a_value);
+	system("pause");
+}
+  ~~~
+
+
+
+## 多态
+
+**多态**是多种形态。当类之间存在层次结构，并且类之间是通过继承关联时，就会用到多态。
+
+C++ 多态意味着调用成员函数时，会根据调用函数的对象的类型来执行不同的函数。
+
+1. 案例
+
+   ~~~c++
+   #include <iostream>
+   using namespace std;
+    
+   class Shape {
+      protected:
+         int width, height;
+      public:
+         Shape( int a=0, int b=0)
+         {
+            width = a;
+            height = b;
+         }
+         virtual int area()
+         {
+            cout << "Parent class area :" <<endl;
+            return 0;
+         }
+   };
+   class Rectangle: public Shape{
+      public:
+         Rectangle( int a=0, int b=0):Shape(a, b) { }
+         int area ()
+         {
+            cout << "Rectangle class area :" <<endl;
+            return (width * height);
+         }
+   };
+   class Triangle: public Shape{
+      public:
+         Triangle( int a=0, int b=0):Shape(a, b) { }
+         int area ()
+         {
+            cout << "Triangle class area :" <<endl;
+            return (width * height / 2);
+         }
+   };
+   // 程序的主函数
+   int main( )
+   {
+      Shape *shape;
+      Rectangle rec(10,7);
+      Triangle  tri(10,5);
+    
+      // 存储矩形的地址
+      shape = &rec;
+      // 调用矩形的求面积函数 area
+      shape->area();
+    
+      // 存储三角形的地址
+      shape = &tri;
+      // 调用三角形的求面积函数 area
+      shape->area();
+    
+      system("pause");
+   }
+   
+   /*
+   
+   多态指的是:
+   - 定义一个基类,它具有虚函数
+   - 然后不同的派生类继承基类并重写(Override)虚函数
+   - 通过基类指针或引用,调用派生类对象的函数
+   
+   */
+   ~~~
+
+   
+
